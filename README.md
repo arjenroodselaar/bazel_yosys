@@ -4,15 +4,18 @@ This repository contains some example verification rules/targets for Yosys, driv
 
 ## Getting Started
 
-To get this running, make sure you have Docker installed. Run the following to start the container:
+To get this running, make sure you have Docker installed. Run the following to create the required
+image and start the container:
 
 ```
-python3 docker/run-devcontainer
+docker build --tag xyz/product-dev docker/
+docker/run-devcontainer
 ```
 
 Then trying running one of the formal tests for the PicoRV32 CPU:
 
 ```
+cd product
 bazel run //hdl/cpu/picorv32/formal:add
 ```
 
