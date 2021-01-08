@@ -1,0 +1,7 @@
+toolchain/bazel/1.0.0/** filter=lfs diff=lfs merge=lfs -text
+toolchain/ocaml/4.08.1/** filter=lfs diff=lfs merge=lfs -text
+toolchain/solvers/avy/f2e3044/** filter=lfs diff=lfs merge=lfs -text
+toolchain/solvers/boolector/3.0.0-854f7bd/** filter=lfs diff=lfs merge=lfs -text
+toolchain/solvers/yices/2.6.1-f686c28/** filter=lfs diff=lfs merge=lfs -text
+toolchain/solvers/z3/4.8.6/** filter=lfs diff=lfs merge=lfs -text
+toolchain/yosys/0.9-2daa5685/** filter=lfs diff=lfs merge=lfs -text

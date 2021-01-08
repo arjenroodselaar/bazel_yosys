@@ -1,0 +1,7 @@
+.devcontainer
+.vscode
+
+bazel-*
+docker/devcontainer.json
+
+toolchain/yosys/0.9-2daa5685/share/yosys/python3/__pycache__

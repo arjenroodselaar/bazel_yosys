@@ -1,0 +1,15 @@
+{
+  "name": "Product",
+  "image": "xyz/product-dev",
+  "runArgs": [
+    "-v",
+    "${env:HOME}/.ssh:/home/.ssh:ro",
+    "-v",
+    "${env:HOME}/.config:/home/.config",
+    "-v",
+    "xyz-product-dev-vcs:/var/vcs",
+    "-v",
+    "xyz-product-dev-vscode-server:/home/.vscode-server"
+  ],
+  "workspaceFolder": "/home/product"
+}

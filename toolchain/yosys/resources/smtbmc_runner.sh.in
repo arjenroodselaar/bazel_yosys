@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+set -o pipefail
+
+# smtio.py, the part of smtbmc which handles the interaction with the solver expects the solver
+# binary to be available through PATH. We're hacking around this by adding the directory holding
+# the tool wrapper to the path.
+export PATH=$PATH:"$PWD/$(dirname {solver_exe})"
+
+SMTBMC={smtbmc_exe}
+MODE={mode}
+ARGS="{args}"
+TRACE_ARGS="{trace_args}"
+MODEL={model}
+OUTPUT_FILTER='s/^(.*): (.*)\/(testlogs\/[a-zA-Z0-9\/\._]+)$/\1: bazel-\3/g'
+
+$SMTBMC $MODE $ARGS $TRACE_ARGS $MODEL | sed -E "$OUTPUT_FILTER"

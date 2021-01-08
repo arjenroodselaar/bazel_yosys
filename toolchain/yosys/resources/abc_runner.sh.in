@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e          # exit on any non-zero return code
+set -o pipefail # exit when intermediate steps in a pipeline fail
+
+ABC={abc_exe}
+ABC_CMDS="{abc_cmds}"
+SMTBMC={smtbmc_exe}
+SMTBMC_ARGS="{smtbmc_args}"
+TRACE_ARGS="{trace_args}"
+AWK_PROGRAM='BEGIN { rc = 1 } {
+  S1 = "Stopping BMC because all 2\^[0-9]+ reachable states are visited" ;
+  S2 = "No output asserted in [0-9]+ frames" ;
+  S3 = "Property proved" ;
+  if ($0 ~ S1 || $0 ~ S2 || $0 ~ S3) {
+    rc = 0;
+  }
+} { print } END { exit rc }'
+OUTPUT_FILTER='s/^(.*): (.*)\/(testlogs\/[a-zA-Z0-9\/\._]+)$/\1: bazel-\3/g'
+
+# smtio.py, the part of smtbmc which handles the interaction with the solver expects the solver
+# binary to be available through PATH. We're hacking around this by adding the directory holding
+# the tool wrapper to the path.
+export PATH=$PATH:"$PWD/$(dirname {smtbmc_solver_exe})"
+
+# ABC does not clearly indicate a failed proof using its exit code, nor does it produce a concrete
+# counter example if the proof fails. Instead a CEX file is generated which can be used to generate
+# such a counter example using an SMT2 solver. To deal with all this the runner below effectively
+# consists of the following shell statement:
+#
+# abc | awk || smtbmc | sed
+#
+# ABC runs, piping it's output to awk. The awk script matches the output against some known patterns
+# to determine if the proof succeeded. If so it returns 0, short-circuits the statement and end this
+# wrapper. If the required patterns are not found awk returns 1, which will invoke smtbmc to
+# produce a counter example. The output from smtbmc is piped through sed in order to rewrite the
+# output and use the Bazel simlinks to make the output easier to locate.
+
+{ $ABC -c "$ABC_CMDS" | awk "$AWK_PROGRAM" ; } \
+|| { $SMTBMC $SMTBMC_ARGS | sed -E "$OUTPUT_FILTER" ; }
